@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { EntityNotFoundError } from 'src/errors/entity-not-found.error';
 
 @Controller('users')
 export class UsersController {
@@ -19,7 +20,11 @@ export class UsersController {
 
   @Get(':id')
   findOne(@Param('id') id: number) {
-    return this.usersService.findOne(id);
+    const user = this.usersService.findOne(id);
+    if (!user) {
+      throw new EntityNotFoundError();
+    }
+    return user;
   }
 
   @Patch(':id')
